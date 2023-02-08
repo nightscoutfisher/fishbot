@@ -1,31 +1,36 @@
-import functions_framework
-from gpt_index import SimpleDirectoryReader, GPTListIndex, readers, GPTSimpleVectorIndex, LLMPredictor, PromptHelper
-from langchain import OpenAI
 import sys
 import os
+import openai
+
+from gpt_index import SimpleDirectoryReader, GPTListIndex, readers, GPTSimpleVectorIndex, LLMPredictor, PromptHelper
+from langchain import OpenAI
+
+
 from IPython.display import Markdown, display
+from flask import Flask
 
-@functions_framework.http
-def hello_http(request):
-   """HTTP Cloud Function.
-   Args:
-       request (flask.Request): The request object.
-       <https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data>
-   Returns:
-       The response text, or any set of values that can be turned into a
-       Response object using `make_response`
-       <https://flask.palletsprojects.com/en/1.1.x/api/#flask.make_response>.
-   """
-   request_json = request.get_json(silent=True)
-   request_args = request.args
+app = Flask(__name__)
 
-   if request_json and 'name' in request_json:
-       name = request_json['name']
-   elif request_args and 'name' in request_args:
-       name = request_args['name']
-   else:
-       name = 'World'
-   return 'Hello {}!'.format(name)
+
+
+@app.route("/")
+def index():
+    return '''
+        <form action="/answer" method="post">
+            What do you want to ask Fish? <input type="text" name="question">
+            <input type="submit" value="Submit">
+        </form>
+    '''
+
+@app.route("/answer", methods=["POST"])
+def answer():
+    index = GPTSimpleVectorIndex.load_from_disk('index.json')
+    question = request.form["question"]
+    response = index.query(query, response_mode="compact", verbose=False)
+    
+    display(Markdown(f"Fish Bot says: <b>{response.response}</b>"))
+    return f"Fish Bot says: <b>{response.response}</b>"
+
 
 def ask_fish():
     index = GPTSimpleVectorIndex.load_from_disk('index.json')
@@ -33,3 +38,6 @@ def ask_fish():
         query = input("What do you want to ask Fish? ")
         response = index.query(query, response_mode="compact", verbose=False)
         display(Markdown(f"Fish Bot says: <b>{response.response}</b>"))
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))

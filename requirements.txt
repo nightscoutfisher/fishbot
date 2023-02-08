@@ -1,0 +1,4 @@
+functions-framework==3.*
+gpt_index
+langchain
+ipython 

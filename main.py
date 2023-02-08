@@ -24,7 +24,7 @@ def index():
 
 @app.route("/answer", methods=["POST"])
 def answer():
-    index = GPTSimpleVectorIndex.load_from_disk('index.json')
+    index = GPTSimpleVectorIndex.load_from_disk('data/index.json')
     question = request.form["question"]
     response = index.query(query, response_mode="compact", verbose=False)
     

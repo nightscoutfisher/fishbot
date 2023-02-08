@@ -1,13 +1,12 @@
 import sys
 import os
+import openai
 
 from gpt_index import SimpleDirectoryReader, GPTListIndex, readers, GPTSimpleVectorIndex, LLMPredictor, PromptHelper
-from IPython.display import Markdown, display
-from flask import Flask
+from flask import Flask, request
 
 app = Flask(__name__)
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
+os.environ.get('OPENAI_API_KEY')
 
 @app.route("/")
 def index():
@@ -22,7 +21,7 @@ def index():
 def answer():
     index = GPTSimpleVectorIndex.load_from_disk('data/index.json')
     question = request.form["question"]
-    response = index.query(question, response_mode="compact", verbose=False)
+    response = index.query(question, response_mode="compact")
     return f"Fish Bot says: <b>{response.response}</b>"
 
 

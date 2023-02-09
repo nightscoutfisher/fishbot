@@ -68,3 +68,14 @@ input[type="submit"] {
   position: absolute;
   bottom: 0px;
 }
+a:link {
+  color: #10A37F;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #10A37F;
+  background-color: transparent;
+  text-decoration: none;
+}

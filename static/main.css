@@ -79,3 +79,10 @@ a:visited {
   background-color: transparent;
   text-decoration: none;
 }
+
+@media only screen and (max-width: 600px) {
+  form {
+    width: 100%;
+  }
+}
+
